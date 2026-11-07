@@ -1,8 +1,12 @@
 (function () {
   const C = window.ZENVO;
-  const H = { apikey: C.SUPABASE_KEY, Authorization: "Bearer " + C.SUPABASE_KEY, "Content-Type": "application/json" };
+  // the publishable key goes in "apikey" only (it is not a JWT)
+  const H = { apikey: C.SUPABASE_KEY, "Content-Type": "application/json" };
   const $ = (id) => document.getElementById(id);
-  let products = [];
+  let products = [
+    { id: "nova15max", name: "HUAWEI nova 15 Max", price: 269, old_price: 499 },
+    { id: "honor-magic-smart", name: "HONOR Magic Smart", price: 210, old_price: 400 },
+  ];
   let cfg = { mode: "test", currency: "USD" };
   let current = null; // { orderId, sessionId, amount, currency, mode }
 
