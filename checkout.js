@@ -91,6 +91,7 @@
       current = await api({
         action: "init",
         product_id: $("co-product").value,
+        return_path: location.pathname,
         customer: {
           name: $("co-name").value, email: $("co-email").value, phone: $("co-phone").value,
           country: $("co-country").value, city: $("co-city").value, address: $("co-address").value,
