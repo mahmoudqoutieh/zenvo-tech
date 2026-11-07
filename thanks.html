@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zenvo Tech – حالة الطلب</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+body{margin:0;min-height:100vh;background:#070B16;color:#fff;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px;box-sizing:border-box}
+.card{max-width:560px;width:100%;background:#0E1526;border:1px solid #1E2A44;border-radius:28px;padding:44px 32px;text-align:center;display:flex;flex-direction:column;gap:16px;align-items:center}
+h1{margin:0;font-size:32px}
+p{margin:0;color:#A9B4C8;font-size:18px;line-height:1.7}
+.ref{font-family:'Space Grotesk',sans-serif;color:#C3CCDD;font-size:14px;direction:ltr}
+a.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 28px;border-radius:14px;background:#14C8A8;color:#04121F;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<main class="card">
+<svg id="ic" width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="#14C8A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M7.5 12.5l3 3 6-6"></path></svg>
+<h1 id="t">تم الدفع بنجاح</h1>
+<p id="d">شكراً لطلبك من Zenvo Tech. وصلنا طلبك ورح نتواصل معك على الإيميل أو الهاتف لتأكيد الشحن.</p>
+<span class="ref" id="ref"></span>
+<a class="btn" id="b" href="index.html">الرجوع للمتجر</a>
+</main>
+<script>
+const q = new URLSearchParams(location.search);
+const st = q.get('status'), order = q.get('order') || '';
+if (order) document.getElementById('ref').textContent = 'Order #' + order.slice(0, 8).toUpperCase();
+if (st !== 'paid') {
+  const ic = document.getElementById('ic'); ic.setAttribute('stroke', '#FF9B8A');
+  ic.innerHTML = '<circle cx="12" cy="12" r="10"></circle><path d="M15 9l-6 6M9 9l6 6"></path>';
+  document.getElementById('t').textContent = st === 'pending' ? 'جاري التحقق من الدفع' : 'ما تمت عملية الدفع';
+  document.getElementById('d').textContent = st === 'pending'
+    ? 'ما قدرنا نأكد الدفع لحظياً. إذا انسحب المبلغ من بطاقتك، فريقنا رح يتأكد ويتواصل معك.'
+    : 'ما انسحب أي مبلغ من بطاقتك. تأكد من بيانات البطاقة أو جرّب بطاقة ثانية.';
+  const b = document.getElementById('b'); b.textContent = 'حاول مرة أخرى'; b.href = 'index.html#order';
+}
+</script>
+</body>
+</html>

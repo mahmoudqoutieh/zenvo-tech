@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Zenvo Tech – لوحة التحكم</title>
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#070B16;color:#fff;font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;line-height:1.6}
+.wrap{max-width:1180px;margin:0 auto;padding:24px}
+header{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;border-bottom:1px solid #1E2A44;padding:16px 24px}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:22px;direction:ltr}
+.card{background:#0E1526;border:1px solid #1E2A44;border-radius:20px;padding:24px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{margin:0}
+h2{font-size:22px}
+.muted{color:#A9B4C8;font-size:14px}
+label{display:flex;flex-direction:column;gap:6px;font-weight:500;font-size:15px}
+input,select{min-height:46px;padding:0 14px;border-radius:10px;border:1px solid #2A3A5C;background:#070B16;color:#fff;font:inherit;width:100%}
+input:focus,select:focus{outline:2px solid #14C8A8;outline-offset:1px}
+button{min-height:44px;padding:0 18px;border-radius:10px;border:0;background:#14C8A8;color:#04121F;font:inherit;font-weight:700;cursor:pointer}
+button.ghost{background:transparent;border:1px solid #2A3A5C;color:#fff}
+button.danger{background:#5A1F1F;color:#FFD3CC}
+button:disabled{opacity:.6;cursor:wait}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.row>*{flex:1 1 180px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{background:transparent;border:1px solid #2A3A5C;color:#C3CCDD}
+.tabs button[aria-selected="true"]{background:#14C8A8;color:#04121F;border-color:#14C8A8}
+.mode{display:flex;border:1px solid #2A3A5C;border-radius:12px;overflow:hidden}
+.mode button{flex:1;border-radius:0;background:transparent;color:#C3CCDD}
+.mode button[aria-pressed="true"].test{background:#F3D58C;color:#2A2008}
+.mode button[aria-pressed="true"].live{background:#14C8A8;color:#04121F}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700}
+.paid{background:#0F3B33;color:#5EE6CF}.pending{background:#3A2E10;color:#F3D58C}.failed{background:#3B1717;color:#FF9B8A}
+.table{overflow-x:auto;border:1px solid #1E2A44;border-radius:14px}
+table{width:100%;border-collapse:collapse;min-width:820px}
+th,td{padding:12px 14px;text-align:right;border-bottom:1px solid #1E2A44;font-size:14px;vertical-align:top}
+th{color:#A9B4C8;font-weight:500;background:#0B1120}
+.note{padding:12px 14px;border-radius:12px;font-size:14px}
+.note.warn{background:#3A2E10;color:#F3D58C}.note.ok{background:#0F3B33;color:#5EE6CF}.note.err{background:#3B1717;color:#FF9B8A}
+.hidden{display:none!important}
+.stat{display:flex;flex-direction:column;gap:2px}
+.stat b{font-family:'Space Grotesk',sans-serif;font-size:30px}
+code{font-family:'Space Grotesk',monospace;direction:ltr;unicode-bidi:embed}
+</style>
+</head>
+<body>
+<header>
+<div class="brand"><svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="26" fill="#fff"/><path d="M30 32 H70 L30 68 H56" fill="none" stroke="#0B1B3A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><circle cx="70" cy="68" r="7" fill="#14C8A8"/></svg>zenvo <span style="font-size:12px;letter-spacing:4px;color:#14C8A8">ADMIN</span></div>
+<div id="who" class="row hidden" style="flex:0 0 auto"><span id="who-email" class="muted"></span><button class="ghost" id="logout" type="button">تسجيل الخروج</button></div>
+</header>
+
+<!-- LOGIN -->
+<main class="wrap" id="login-view">
+<form class="card" id="login" style="max-width:440px;margin:60px auto">
+<h1 style="font-size:26px">دخول لوحة التحكم</h1>
+<label>البريد الإلكتروني<input id="l-email" type="email" dir="ltr" required autocomplete="username"></label>
+<label>كلمة المرور<input id="l-pass" type="password" dir="ltr" required autocomplete="current-password"></label>
+<button type="submit" id="l-btn">دخول</button>
+<p id="l-msg" class="note err hidden" role="alert"></p>
+</form>
+</main>
+
+<!-- APP -->
+<main class="wrap hidden" id="app" style="display:flex;flex-direction:column;gap:20px">
+<div class="tabs" role="tablist">
+<button type="button" role="tab" aria-selected="true" data-tab="orders">الطلبات</button>
+<button type="button" role="tab" aria-selected="false" data-tab="payment">الدفع والإعدادات</button>
+<button type="button" role="tab" aria-selected="false" data-tab="products">المنتجات والأسعار</button>
+<button type="button" role="tab" aria-selected="false" data-tab="account">الحساب</button>
+</div>
+
+<!-- ORDERS -->
+<section data-panel="orders" style="display:flex;flex-direction:column;gap:20px">
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+<div class="card stat"><span class="muted">طلبات مدفوعة</span><b id="s-paid">0</b></div>
+<div class="card stat"><span class="muted">إجمالي المبيعات</span><b id="s-total" dir="ltr" style="text-align:right">$0</b></div>
+<div class="card stat"><span class="muted">بانتظار الدفع</span><b id="s-pending">0</b></div>
+</div>
+<div class="card">
+<div class="row" style="justify-content:space-between;align-items:center">
+<h2 style="flex:0 0 auto">آخر الطلبات</h2>
+<div class="row" style="flex:0 0 auto">
+<select id="o-filter" style="width:auto"><option value="">كل الحالات</option><option value="paid">مدفوع</option><option value="pending">بانتظار الدفع</option><option value="failed">فشل</option></select>
+<select id="o-mode" style="width:auto"><option value="">حقيقي + تجريبي</option><option value="live">حقيقي فقط</option><option value="test">تجريبي فقط</option></select>
+<button class="ghost" id="o-refresh" type="button">تحديث</button>
+</div>
+</div>
+<div class="table"><table>
+<thead><tr><th>التاريخ</th><th>المنتج</th><th>المبلغ</th><th>الحالة</th><th>الزبون</th><th>العنوان</th><th>الدفع</th></tr></thead>
+<tbody id="o-body"><tr><td colspan="7" class="muted">جاري التحميل…</td></tr></tbody>
+</table></div>
+</div>
+</section>
+
+<!-- PAYMENT -->
+<section data-panel="payment" class="hidden" style="display:flex;flex-direction:column;gap:20px">
+<div class="card">
+<h2>وضع الدفع</h2>
+<p class="muted">بالوضع التجريبي ما بينسحب أي مبلغ حقيقي. لما تضيف مفتاح API الحقيقي وتختبره، حوّل لـ "دفع حقيقي".</p>
+<div class="mode" role="group" aria-label="وضع الدفع">
+<button type="button" class="test" data-mode="test" aria-pressed="true">تجريبي</button>
+<button type="button" class="live" data-mode="live" aria-pressed="false">دفع حقيقي</button>
+</div>
+<p id="mode-note" class="note warn">الدفع حالياً تجريبي.</p>
+</div>
+
+<div class="grid">
+<form class="card" id="k-live">
+<h3>مفتاح API الحقيقي (Live)</h3>
+<p class="muted">من بوابة ماي فاتورة: Integration Settings ← API Key. حساب الأردن بيستخدم <code>api.myfatoorah.com</code>.</p>
+<p id="k-live-state" class="muted"></p>
+<label>الصق المفتاح هون<input id="k-live-in" type="password" dir="ltr" autocomplete="off" placeholder="الصق مفتاح API الحقيقي"></label>
+<div class="row"><button type="submit">حفظ المفتاح</button><button type="button" class="ghost" data-test="live">اختبار الاتصال</button></div>
+<p class="note hidden" data-res="live" role="status"></p>
+</form>
+<form class="card" id="k-test">
+<h3>مفتاح API التجريبي (Test)</h3>
+<p class="muted">مضاف حالياً مفتاح التجربة العام من ماي فاتورة. بتقدر تستبدله بمفتاح حسابك التجريبي.</p>
+<p id="k-test-state" class="muted"></p>
+<label>الصق المفتاح هون<input id="k-test-in" type="password" dir="ltr" autocomplete="off" placeholder="الصق مفتاح API التجريبي"></label>
+<div class="row"><button type="submit">حفظ المفتاح</button><button type="button" class="ghost" data-test="test">اختبار الاتصال</button></div>
+<p class="note hidden" data-res="test" role="status"></p>
+</form>
+</div>
+
+<form class="card" id="gen">
+<h3>إعدادات عامة</h3>
+<div class="row">
+<label>عملة الدفع<select id="g-currency"><option>USD</option><option>JOD</option><option>KWD</option><option>SAR</option><option>AED</option><option>EUR</option></select></label>
+<label>رقم الواتساب (مع رمز الدولة)<input id="g-wa" dir="ltr" placeholder="+962 7X XXX XXXX"></label>
+<label>رابط الموقع<input id="g-site" dir="ltr" placeholder="https://..."></label>
+</div>
+<p class="muted">لازم العملة تكون مفعّلة على حساب ماي فاتورة تبعك. اختبر الاتصال بعد ما تغيّرها.</p>
+<div class="row"><button type="submit" style="flex:0 0 auto">حفظ الإعدادات</button></div>
+<p class="note hidden" id="gen-res" role="status"></p>
+</form>
+</section>
+
+<!-- PRODUCTS -->
+<section data-panel="products" class="hidden">
+<div class="card">
+<h2>المنتجات والأسعار</h2>
+<p class="muted">السعر هون هو اللي بينحسب على الزبون فعلياً وقت الدفع. "السعر قبل الخصم" بيظهر مشطوب.</p>
+<div class="table"><table style="min-width:640px">
+<thead><tr><th>المنتج</th><th>السعر</th><th>السعر قبل الخصم</th><th>معروض</th><th></th></tr></thead>
+<tbody id="p-body"></tbody>
+</table></div>
+</div>
+</section>
+
+<!-- ACCOUNT -->
+<section data-panel="account" class="hidden">
+<form class="card" id="pw" style="max-width:480px">
+<h2>تغيير كلمة المرور</h2>
+<label>كلمة المرور الجديدة<input id="pw-new" type="password" dir="ltr" minlength="10" required autocomplete="new-password"></label>
+<button type="submit">حفظ كلمة المرور</button>
+<p class="note hidden" id="pw-res" role="status"></p>
+</form>
+</section>
+</main>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const C = window.ZENVO;
+const sb = supabase.createClient(C.SUPABASE_URL, C.SUPABASE_KEY);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = (n, cur = 'USD') => (cur === 'USD' ? '$' : cur + ' ') + Number(n || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
+const mask = (k) => k ? k.slice(0, 6) + '••••••••' + k.slice(-4) : '';
+function note(el, text, kind) { el.textContent = text; el.className = 'note ' + kind; el.classList.remove('hidden'); }
+let settings = null;
+
+// ---------- auth ----------
+async function boot() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { $('#login-view').classList.remove('hidden'); $('#app').classList.add('hidden'); $('#who').classList.add('hidden'); return; }
+  const { data: ok } = await sb.rpc('is_admin');
+  if (!ok) { await sb.auth.signOut(); note($('#l-msg'), 'هذا الحساب ما عنده صلاحية دخول للوحة التحكم.', 'err'); return boot(); }
+  $('#login-view').classList.add('hidden'); $('#app').classList.remove('hidden'); $('#who').classList.remove('hidden');
+  $('#who-email').textContent = session.user.email;
+  await Promise.all([loadSettings(), loadOrders(), loadProducts()]);
+}
+$('#login').addEventListener('submit', async (e) => {
+  e.preventDefault(); $('#l-msg').classList.add('hidden'); $('#l-btn').disabled = true;
+  const { error } = await sb.auth.signInWithPassword({ email: $('#l-email').value.trim(), password: $('#l-pass').value });
+  $('#l-btn').disabled = false;
+  if (error) return note($('#l-msg'), 'البريد أو كلمة المرور غير صحيحة.', 'err');
+  boot();
+});
+$('#logout').addEventListener('click', async () => { await sb.auth.signOut(); boot(); });
+
+// ---------- tabs ----------
+$$('[data-tab]').forEach((b) => b.addEventListener('click', () => {
+  $$('[data-tab]').forEach((x) => x.setAttribute('aria-selected', x === b));
+  $$('[data-panel]').forEach((p) => p.classList.toggle('hidden', p.dataset.panel !== b.dataset.tab));
+}));
+
+// ---------- settings ----------
+async function loadSettings() {
+  const { data, error } = await sb.from('settings').select('*').eq('id', 1).single();
+  if (error) return;
+  settings = data;
+  $$('[data-mode]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.mode === data.mode));
+  const live = data.mode === 'live';
+  note($('#mode-note'), live ? 'الدفع الحقيقي مفعّل: المبالغ بتنسحب فعلياً من بطاقات الزبائن.' : 'الدفع حالياً تجريبي: ما بينسحب أي مبلغ حقيقي.', live ? 'ok' : 'warn');
+  $('#k-live-state').innerHTML = data.mf_api_key_live ? 'المفتاح المحفوظ: <code>' + esc(mask(data.mf_api_key_live)) + '</code>' : 'ما في مفتاح حقيقي محفوظ بعد.';
+  $('#k-test-state').innerHTML = data.mf_api_key_test ? 'المفتاح المحفوظ: <code>' + esc(mask(data.mf_api_key_test)) + '</code>' : 'ما في مفتاح تجريبي محفوظ.';
+  $('#g-currency').value = data.currency || 'USD';
+  $('#g-wa').value = data.whatsapp || '';
+  $('#g-site').value = data.site_url || '';
+}
+async function saveSettings(patch) {
+  const { error } = await sb.from('settings').update({ ...patch, updated_at: new Date().toISOString() }).eq('id', 1);
+  if (error) throw error;
+  await loadSettings();
+}
+$$('[data-mode]').forEach((b) => b.addEventListener('click', async () => {
+  const mode = b.dataset.mode;
+  if (mode === settings.mode) return;
+  if (mode === 'live') {
+    if (!settings.mf_api_key_live) return note($('#mode-note'), 'أضف مفتاح API الحقيقي واختبره أولاً، بعدين فعّل الدفع الحقيقي.', 'err');
+    if (!confirm('تفعيل الدفع الحقيقي؟ من هلأ المبالغ رح تنسحب فعلياً من بطاقات الزبائن.')) return;
+  }
+  try { await saveSettings({ mode }); } catch (e) { note($('#mode-note'), 'ما انحفظ: ' + e.message, 'err'); }
+}));
+async function saveKey(mode, input) {
+  const v = input.value.trim();
+  const res = $(`[data-res="${mode}"]`);
+  if (v.length < 20) return note(res, 'المفتاح قصير، تأكد إنك نسخته كامل.', 'err');
+  try { await saveSettings(mode === 'live' ? { mf_api_key_live: v } : { mf_api_key_test: v }); input.value = ''; note(res, 'انحفظ المفتاح. اضغط "اختبار الاتصال" للتأكد.', 'ok'); }
+  catch (e) { note(res, 'ما انحفظ: ' + e.message, 'err'); }
+}
+$('#k-live').addEventListener('submit', (e) => { e.preventDefault(); saveKey('live', $('#k-live-in')); });
+$('#k-test').addEventListener('submit', (e) => { e.preventDefault(); saveKey('test', $('#k-test-in')); });
+$$('[data-test]').forEach((b) => b.addEventListener('click', async () => {
+  const mode = b.dataset.test, res = $(`[data-res="${mode}"]`);
+  b.disabled = true; note(res, 'جاري الاختبار…', 'warn');
+  const { data, error } = await sb.functions.invoke('admin-test', { body: { mode } });
+  b.disabled = false;
+  if (error) return note(res, 'تعذر الاختبار: ' + error.message, 'err');
+  note(res, data.message, data.ok ? 'ok' : 'err');
+}));
+$('#gen').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  try { await saveSettings({ currency: $('#g-currency').value, whatsapp: $('#g-wa').value.trim() || null, site_url: $('#g-site').value.trim() || null }); note($('#gen-res'), 'انحفظت الإعدادات.', 'ok'); }
+  catch (er) { note($('#gen-res'), 'ما انحفظت: ' + er.message, 'err'); }
+});
+
+// ---------- orders ----------
+const ST = { paid: 'مدفوع', pending: 'بانتظار الدفع', failed: 'فشل' };
+async function loadOrders() {
+  let q = sb.from('orders').select('*').order('created_at', { ascending: false }).limit(200);
+  if ($('#o-filter').value) q = q.eq('status', $('#o-filter').value);
+  if ($('#o-mode').value) q = q.eq('mode', $('#o-mode').value);
+  const { data, error } = await q;
+  const tb = $('#o-body');
+  if (error) { tb.innerHTML = `<tr><td colspan="7">${esc(error.message)}</td></tr>`; return; }
+  const live = (data || []).filter((o) => o.mode === 'live' || $('#o-mode').value === 'test');
+  const paid = live.filter((o) => o.status === 'paid');
+  $('#s-paid').textContent = paid.length;
+  $('#s-total').textContent = money(paid.reduce((s, o) => s + Number(o.amount), 0));
+  $('#s-pending').textContent = live.filter((o) => o.status === 'pending').length;
+  if (!data.length) { tb.innerHTML = '<tr><td colspan="7" class="muted">ما في طلبات بعد.</td></tr>'; return; }
+  tb.innerHTML = data.map((o) => `<tr>
+    <td>${esc(new Date(o.created_at).toLocaleString('ar', { dateStyle: 'medium', timeStyle: 'short' }))}<br><span class="muted">${o.mode === 'live' ? 'حقيقي' : 'تجريبي'}</span></td>
+    <td dir="ltr" style="text-align:right">${esc(o.product_name)}</td>
+    <td dir="ltr" style="text-align:right">${esc(money(o.amount, o.currency))}</td>
+    <td><span class="pill ${esc(o.status)}">${esc(ST[o.status] || o.status)}</span></td>
+    <td>${esc(o.customer_name)}<br><span class="muted" dir="ltr">${esc(o.customer_email)}</span><br><span class="muted" dir="ltr">${esc(o.customer_phone)}</span></td>
+    <td>${esc(o.country)} · ${esc(o.city)}<br><span class="muted">${esc(o.address)}</span></td>
+    <td><span class="muted" dir="ltr">${esc(o.mf_payment_id || '—')}</span>${o.mf_details && o.mf_details.PaymentMethod ? '<br><span class="muted">' + esc(o.mf_details.PaymentMethod) + '</span>' : ''}</td>
+  </tr>`).join('');
+}
+$('#o-refresh').addEventListener('click', loadOrders);
+$('#o-filter').addEventListener('change', loadOrders);
+$('#o-mode').addEventListener('change', loadOrders);
+
+// ---------- products ----------
+async function loadProducts() {
+  const { data } = await sb.from('products').select('*').order('sort');
+  $('#p-body').innerHTML = (data || []).map((p) => `<tr data-id="${esc(p.id)}">
+    <td dir="ltr" style="text-align:right">${esc(p.name)}</td>
+    <td><input type="number" min="1" step="0.01" value="${esc(p.price)}" data-f="price" dir="ltr" style="max-width:130px"></td>
+    <td><input type="number" min="0" step="0.01" value="${esc(p.old_price ?? '')}" data-f="old_price" dir="ltr" style="max-width:130px"></td>
+    <td><input type="checkbox" ${p.active ? 'checked' : ''} data-f="active" style="width:22px;min-height:22px" aria-label="معروض على الموقع"></td>
+    <td><button type="button" data-save>حفظ</button> <span class="muted" data-ok></span></td>
+  </tr>`).join('');
+  $$('[data-save]').forEach((b) => b.addEventListener('click', async () => {
+    const tr = b.closest('tr'), ok = $('[data-ok]', tr);
+    const price = Number($('[data-f="price"]', tr).value), oldv = $('[data-f="old_price"]', tr).value;
+    if (!(price > 0)) { ok.textContent = 'السعر غير صحيح'; return; }
+    const { error } = await sb.from('products').update({ price, old_price: oldv === '' ? null : Number(oldv), active: $('[data-f="active"]', tr).checked }).eq('id', tr.dataset.id);
+    ok.textContent = error ? 'ما انحفظ' : 'انحفظ ✓';
+  }));
+}
+
+// ---------- password ----------
+$('#pw').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const { error } = await sb.auth.updateUser({ password: $('#pw-new').value });
+  if (error) return note($('#pw-res'), 'ما انحفظت: ' + error.message, 'err');
+  $('#pw-new').value = ''; note($('#pw-res'), 'تغيّرت كلمة المرور.', 'ok');
+});
+
+boot();
+</script>
+</body>
+</html>
