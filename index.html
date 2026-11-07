@@ -21,6 +21,57 @@ summary::-webkit-details-marker{display:none}
 .f input:focus,.f select:focus{outline:2px solid #14C8A8;outline-offset:1px}
 .row{display:flex;flex-wrap:wrap;gap:16px}
 button:disabled{opacity:.6;cursor:wait}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{-webkit-tap-highlight-color:transparent}
+header{position:sticky;top:0;z-index:50;background:rgba(7,11,22,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+section[id]{scroll-margin-top:72px}
+#m-cta{display:none}
+@media (max-width:820px){
+  [style*="padding: 96px 24px"]{padding:56px 16px !important;gap:32px !important}
+  [style*="padding: 72px 24px 56px"]{padding:28px 16px 20px !important;gap:20px !important}
+  [style*="padding: 0 24px 96px"]{padding:0 16px 56px !important}
+}
+@media (max-width:640px){
+  body{padding-bottom:84px}
+  header>div{padding:10px 16px !important;gap:8px 12px !important}
+  header>div>a:first-child svg{width:34px;height:34px}
+  header>div>a:first-child>span{font-size:22px !important}
+  header nav{order:3;width:100%;flex-wrap:nowrap !important;overflow-x:auto;gap:20px !important;font-size:15px;padding:2px 0 4px;scrollbar-width:none;white-space:nowrap}
+  header nav::-webkit-scrollbar{display:none}
+  header>div>a[href="#order"]{min-height:40px !important;padding:0 16px !important;font-size:15px}
+  #top h1{font-size:38px !important;line-height:1.2 !important}
+  #top p{font-size:17px !important}
+  #top [style*="font-size: 52px"]{font-size:44px !important}
+  #top a[style*="min-height: 56px"]{width:100%}
+  #top [style*="padding: 32px 0"]{padding:8px 0 !important}
+  #top img{width:58% !important}
+  [style*="padding: 28px 24px"]{display:grid !important;grid-template-columns:1fr 1fr;gap:22px 12px !important;padding:24px 16px !important}
+  [style*="padding: 28px 24px"] [style*="font-size: 34px"]{font-size:26px !important}
+  [style*="padding: 32px; border-radius: 24px"]{padding:20px !important;border-radius:20px !important}
+  [style*="padding: 36px; border-radius: 24px"]{padding:22px !important}
+  [style*="padding: 28px; border-radius: 20px"]{padding:20px !important}
+  [style*="border-radius: 24px; background: #0E1526; border: 1px solid #14C8A8; padding: 28px"]{padding:18px !important}
+  [style*="height: 340px; border-radius: 18px"]{height:250px !important}
+  [style*="height: 340px; border-radius: 18px"] img{height:220px !important}
+  [style*="padding: 16px 28px; border-top"]{flex-direction:column !important;gap:2px !important;padding:12px 18px !important}
+  [style*="padding: 16px 28px; border-top"]>span:last-child{text-align:right !important}
+  [style*="padding: 20px 28px; background: #0E1526"]{padding:16px 18px !important}
+  [style*="font-size: 60px; font-weight: 700; line-height: 1.1"]{font-size:48px !important}
+  [style*="padding: 56px 48px"]{padding:28px 22px !important;border-radius:24px !important}
+  [style*="padding: 56px 48px"] a{width:100%}
+  details[style*="padding: 20px 24px"]{padding:16px 18px !important}
+  details summary{font-size:17px !important}
+  .row>.f{flex:1 1 100%}
+  .f input,.f select{min-height:50px}
+  #embedded-payment{padding:6px !important}
+  footer>div{flex-direction:column;text-align:center;padding:28px 16px !important}
+  #m-cta{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:60;min-height:56px;border-radius:16px;background:#14C8A8;color:#04121F;font-weight:700;font-size:17px;text-decoration:none;align-items:center;justify-content:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.45);transition:transform .25s ease,opacity .25s ease}
+  #m-cta.hide{transform:translateY(140%);opacity:0;pointer-events:none}
+}
+@media (max-width:380px){
+  #top h1{font-size:33px !important}
+  header nav{gap:16px !important;font-size:14px}
+}
 </style>
 </head>
 <body>
@@ -307,6 +358,20 @@ button:disabled{opacity:.6;cursor:wait}
 
 </div>
 
+<a id="m-cta" href="#order">اطلب الآن · عروض بلاك فرايدي</a>
+<script>
+(function(){
+  var c=document.getElementById('m-cta'),o=document.getElementById('order'),h=document.getElementById('top');
+  if(!c||!o||!h)return;
+  function upd(){
+    var vh=window.innerHeight,hb=h.getBoundingClientRect().bottom,or=o.getBoundingClientRect();
+    var show=hb<0 && !(or.top<vh*0.9 && or.bottom>0);
+    c.classList.toggle('hide',!show);
+  }
+  c.classList.add('hide');
+  window.addEventListener('scroll',upd,{passive:true});window.addEventListener('resize',upd);upd();
+})();
+</script>
 <script src="config.js"></script>
 <script src="checkout.js"></script>
 </body>
