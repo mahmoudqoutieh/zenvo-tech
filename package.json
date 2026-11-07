@@ -1,0 +1,17 @@
+{
+  "name": "zenvo-tech",
+  "version": "1.0.0",
+  "description": "Zenvo Tech store: landing page, embedded card checkout and admin dashboard (static site).",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "build": "node build.js",
+    "start": "node server.js",
+    "dev": "node build.js && node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "UNLICENSED"
+}
